@@ -23,8 +23,13 @@ function generateStoryMarkup(story) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
+  const showStar = Boolean(currentUser);
+
+  console.log(currentUser);
+  
   return $(`
       <li id="${story.storyId}">
+        <i class="far fa-star"></i>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -51,6 +56,16 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
+async function toggleFavorite(evt) {
+  const storyId = $(evt.target).closest('li').attr('id');
+  const story = storyList.stories.find(story => story.storyId === storyId);
+  
+
+  currentUser.isFavorite(story) ? currentUser.removeFavorite(story) : currentUser.addFavorite(story);
+}
+
+$storiesContainer.on('click', toggleFavorite);
+
 
 async function submitStory(evt){
   console.debug("submitStory"); 
@@ -60,20 +75,29 @@ async function submitStory(evt){
   const title = $('#create-title').val();
   const url = $('#create-url').val();
   const user = currentUser.username
-  const data = {author,url,title}
+  const data = {author,url,title,user}
 
-  const story = await storyList.addStory(currentUser,data); // storing data in the backend, good practice to await 
+  const story = await storyList.addStory(currentUser, data); // storing data in the backend, good practice to await 
+
   const $story = generateStoryMarkup(story);
   $allStoriesList.prepend($story);
 
-  // $submitForm.hide(); // WHY WONT THIS WORK????
-  // $submitForm.style.visibility = "hidden"; // this one also doesnt work
-
-  $submitForm.slideUp("slow");
-  $submitForm.trigger("reset");
-
-}
+  $submitForm.hide();
+};
 
 $submitForm.on("submit",submitStory);
 
 
+function putFavoritesListOnPage(){
+  // $favoritesPage.empty(); // whats the purpose of this line?
+  if(currentUser.favorites.length===0){
+    $favoritesPage.append("<p>no favorites added</p>");
+  } else {
+    for(let fav of currentUser.favorites){
+      const $fav = generateStoryMarkup(story);
+      $favoritesPage.append($story);
+    };
+  }
+
+  $favoritesPage.show();
+}

@@ -72,6 +72,9 @@ class StoryList {
     });
 
     const story = new Story(response.data.story);
+    user.favorites.push(story.storyId);
+    user.ownStories.push(story.storyId);
+
     this.stories.unshift(story);
 
     return story;
@@ -89,14 +92,16 @@ class User {
    *   - token
    */
 
-  constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+  constructor(
+    {
+      username,
+      name,
+      createdAt,
+      favorites = [],
+      ownStories = []
+    }, 
+    token
+  ) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
@@ -195,6 +200,4 @@ class User {
   }
 }
 
-// async removeStory(){
-  
-// }
+// ABOVE DOESNT SPECIFICALLY SAY ASYNC FUNCTION... just async because its within a class

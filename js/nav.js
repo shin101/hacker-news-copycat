@@ -30,18 +30,43 @@ $navLogin.on("click", navLoginClick);
 function updateNavOnLogin() {
   console.debug("updateNavOnLogin");
   $(".main-nav-links").show();
+  $navLogOut.show();
+  $navUserProfile.text(`${currentUser.username}`).show();
+  $loginSection.hide();
+}
+
+function updateNavOnLogin() {
+  console.debug("updateNavOnLogin");
+  $(".main-nav-links").show();
   $navLogin.hide();
+  $loginForm.hide();
   $navLogOut.show();
   $navUserProfile.text(`${currentUser.username}`).show();
 }
 
 
-  function navSubmitStory(evt) {
-  console.debug("navSubmitStory", evt); // its like console log but hides by default in chrome
-  hidePageComponents();
-  $allStoriesList.show();
-  $submitForm.show();
+function navSubmitStory(evt) {
+console.debug("navSubmitStory", evt); // its like console log but hides by default in chrome
+hidePageComponents();
+$allStoriesList.show();
+$submitForm.show();
   
 }
 
 $navSubmitButton.on("click",navSubmitStory);
+
+
+function navFavorites(evt){
+  console.debug("navFavorites", evt); 
+  hidePageComponents();
+  putFavoritesListOnPage();
+}
+
+$navFavoriteButton.on("click",navFavorites);
+
+function navMyPosts(evt){
+  console.debug("navMyPosts", evt); 
+  hidePageComponents();
+}
+
+$navMyPostsButton.on("click",navMyPosts);

@@ -10,6 +10,7 @@ function navAllStories(evt) {
   console.debug("navAllStories", evt);
   hidePageComponents();
   putStoriesOnPage();
+
 }
 
 $body.on("click", "#nav-all", navAllStories);
@@ -48,12 +49,11 @@ function updateNavOnLogin() {
 function navSubmitStory(evt) {
 console.debug("navSubmitStory", evt); // its like console log but hides by default in chrome
 hidePageComponents();
-$allStoriesList.show();
+putStoriesOnPage();
 $submitForm.show();
-  
 }
 
-$navSubmitButton.on("click",navSubmitStory);
+$navSubmitButton.on("click", navSubmitStory);
 
 
 function navFavorites(evt){
@@ -62,11 +62,12 @@ function navFavorites(evt){
   putFavoritesListOnPage();
 }
 
-$navFavoriteButton.on("click",navFavorites);
+$navFavoriteButton.on("click", navFavorites);
 
 function navMyPosts(evt){
   console.debug("navMyPosts", evt); 
   hidePageComponents();
+  putMyStoriesListOnPage();
 }
 
-$navMyPostsButton.on("click",navMyPosts);
+$navMyPostsButton.on("click", navMyPosts);

@@ -9,7 +9,8 @@ const $storiesContainer = $('.stories-container');
 const $storiesLoadingMsg = $("#stories-loading-msg");
 const $allStoriesList = $("#all-stories-list");
 
-const $favoritesPage = $("favorited-page");
+const $favoritesStories = $("#favorited-stories");
+const $myStories = $("#my-stories");
 const $navFavoriteButton = $("#nav-favorites");
 
 
@@ -37,6 +38,8 @@ function hidePageComponents() {
     $submitForm,
     $loginForm,
     $signupForm,
+    $favoritesStories,
+    $myStories,
   ];
   components.forEach(c => c.hide());
 }

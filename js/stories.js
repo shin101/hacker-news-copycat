@@ -19,17 +19,18 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDelete = false) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
-  const showStar = Boolean(currentUser);
-
-  console.log(currentUser);
+  const isFavorited = currentUser.favorites.some(favorite => favorite.storyId === story.storyId);
   
   return $(`
       <li id="${story.storyId}">
-        <i class="far fa-star"></i>
+        ${showDelete 
+          ? `<i class="fas fa-trash"></i>` 
+          : `<i class="${isFavorited ? "fas" : "far"} fa-star"></i>`
+        }
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -56,15 +57,23 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-async function toggleFavorite(evt) {
+async function toggleFavoriteStar(evt) {
   const storyId = $(evt.target).closest('li').attr('id');
-  const story = storyList.stories.find(story => story.storyId === storyId);
-  
+  const isFavorite = await currentUser.toggleFavoriteStory(storyId);
 
-  currentUser.isFavorite(story) ? currentUser.removeFavorite(story) : currentUser.addFavorite(story);
+  const star = $(evt.target).closest('.fa-star');
+  star.attr('class', isFavorite ? 'fas fa-star' : 'far fa-star');
 }
 
-$storiesContainer.on('click', toggleFavorite);
+$storiesContainer.on('click', '.fa-star', toggleFavoriteStar);
+
+async function deleteStoryTrash(evt) {
+  const storyId = $(evt.target).closest('li').attr('id');
+  await storyList.deleteStory(currentUser, storyId);
+  navMyPosts();
+}
+
+$myStories.on('click', '.fa-trash', deleteStoryTrash);
 
 
 async function submitStory(evt){
@@ -74,12 +83,13 @@ async function submitStory(evt){
   const author = $('#create-author').val();
   const title = $('#create-title').val();
   const url = $('#create-url').val();
-  const user = currentUser.username
-  const data = {author,url,title,user}
+  const data = { author, url, title };
 
   const story = await storyList.addStory(currentUser, data); // storing data in the backend, good practice to await 
 
   const $story = generateStoryMarkup(story);
+
+  console.log($story);
   $allStoriesList.prepend($story);
 
   $submitForm.hide();
@@ -89,15 +99,29 @@ $submitForm.on("submit",submitStory);
 
 
 function putFavoritesListOnPage(){
-  // $favoritesPage.empty(); // whats the purpose of this line?
+  $favoritesStories.empty();
   if(currentUser.favorites.length===0){
-    $favoritesPage.append("<p>no favorites added</p>");
+    $favoritesStories.append("<p>no favorites added</p>");
   } else {
     for(let fav of currentUser.favorites){
-      const $fav = generateStoryMarkup(story);
-      $favoritesPage.append($story);
+      const $fav = generateStoryMarkup(fav);
+      $favoritesStories.append($fav);
     };
   }
 
-  $favoritesPage.show();
+  $favoritesStories.show();
+}
+
+function putMyStoriesListOnPage(){
+  $myStories.empty();
+  if(currentUser.ownStories.length===0){
+    $myStories.append("<p>no stories added</p>");
+  } else {
+    for(let story of currentUser.ownStories){
+      const $story = generateStoryMarkup(story, true);
+      $myStories.append($story);
+    };
+  }
+
+  $myStories.show();
 }
